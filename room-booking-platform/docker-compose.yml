@@ -1,0 +1,87 @@
+services:
+  # Room Service (Java Spring Boot)
+  room-service:
+    build: ./room-service
+    container_name: room-service
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - booking-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+    image: camelia4/room-service:1.0
+
+  # Booking Service (Python FastAPI)
+  booking-service:
+    build: ./booking-service
+    container_name: booking-service
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite:///./bookings.db
+    networks:
+      - booking-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+    image: camelia4/booking-service:1.0
+
+  # User Service (Node.js)
+  user-service:
+    build: ./user-service
+    container_name: user-service
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - JWT_SECRET=your-super-secret-jwt-key-change-in-production
+    networks:
+      - booking-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+    image: camelia4/user-service:1.0
+
+  # API Gateway (Node.js - à créer)
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8081:8081"
+    depends_on:
+      - room-service
+      - booking-service
+      - user-service
+    networks:
+      - booking-network
+    restart: unless-stopped
+
+  # Frontend (React - à créer)
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "8082:80"
+    depends_on:
+      - api-gateway
+    networks:
+      - booking-network
+    restart: unless-stopped
+
+networks:
+  booking-network:
+    driver: bridge
+
+
