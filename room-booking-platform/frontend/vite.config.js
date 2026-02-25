@@ -6,17 +6,8 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:8080',
+        target: 'http://booking.local',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '')
-      },
-      '/bookings': {
-        target: 'http://localhost:8000',
-        changeOrigin: true
-      },
-      '/users': {
-        target: 'http://localhost:3000',
-        changeOrigin: true
       }
     }
   }

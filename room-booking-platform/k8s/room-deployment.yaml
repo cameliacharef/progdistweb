@@ -13,10 +13,18 @@ spec:
         app: room-service
     spec:
       containers:
-      - name: room-service
-        image: camelia4/room-service:1.0   # Remplacez par votre image
-        ports:
-        - containerPort: 8080
-        env:
-        - name: SPRING_PROFILES_ACTIVE
-          value: "kubernetes"
+       - name: room-service
+         image: camelia4/room-service:1.0
+         env:
+         - name: DB_URL
+           value: jdbc:postgresql://postgres-room:5432/roomdb
+         - name: DB_USER
+           valueFrom:
+            secretKeyRef:
+              name: postgres-room-secret
+              key: POSTGRES_USER
+         - name: DB_PASSWORD
+           valueFrom:
+            secretKeyRef:
+              name: postgres-room-secret
+              key: POSTGRES_PASSWORD
