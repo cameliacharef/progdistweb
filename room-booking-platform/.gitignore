@@ -1,0 +1,18 @@
+# IDE
+.vscode/
+.idea/
+
+# Dépendances
+*/node_modules/
+*/target/
+*/build/
+*.jar
+*.war
+
+# Environnements
+.env
+*.log
+
+# Système
+.DS_Store
+Thumbs.db
