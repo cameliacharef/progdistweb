@@ -11,10 +11,15 @@ spec:
     metadata:
       labels:
         app: booking-service
+      annotations:
+        #sidecar.istio.io/inject: "false"
     spec:
+      serviceAccountName: booking-app
+      imagePullSecrets:
+      - name: regcred
       containers:
       - name: booking-service
-        image: camelia4/booking-service:1.0   # Remplacez par votre image
+        image: camelia4/booking-service:2.2  # Remplacez par votre image
         ports:
         - containerPort: 8000
         env:

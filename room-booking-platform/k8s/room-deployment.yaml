@@ -11,20 +11,27 @@ spec:
     metadata:
       labels:
         app: room-service
+      annotations:
+        #sidecar.istio.io/inject: "false"
     spec:
+      serviceAccountName: booking-app
+      imagePullSecrets:
+      - name: regcred
       containers:
-       - name: room-service
-         image: camelia4/room-service:1.0
-         env:
-         - name: DB_URL
-           value: jdbc:postgresql://postgres-room:5432/roomdb
-         - name: DB_USER
-           valueFrom:
+      - name: room-service
+        image: camelia4/room-service:1.0
+        env:
+        - name: DB_URL
+          value: jdbc:postgresql://postgres-room:5432/roomdb
+        - name: DB_USER
+          valueFrom:
             secretKeyRef:
               name: postgres-room-secret
               key: POSTGRES_USER
-         - name: DB_PASSWORD
-           valueFrom:
+        - name: DB_PASSWORD
+          valueFrom:
             secretKeyRef:
               name: postgres-room-secret
               key: POSTGRES_PASSWORD
+        ports:
+        - containerPort: 8080

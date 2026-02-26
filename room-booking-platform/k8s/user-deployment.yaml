@@ -11,12 +11,18 @@ spec:
     metadata:
       labels:
         app: user-service
+      annotations:
+        #sidecar.istio.io/inject: "false"
     spec:
+      spec:
+      serviceAccountName: booking-app
+      imagePullSecrets:
+      - name: regcred
       containers:
       - name: user-service
-        image: camelia4/user-service:1.0   # Remplacez par votre image
-        ports:
-        - containerPort: 3000
+        image: camelia4/user-service:1.0
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: "kubernetes"
+        ports:
+        - containerPort: 3000

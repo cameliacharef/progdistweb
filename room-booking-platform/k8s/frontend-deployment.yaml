@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend
+  namespace: default
 spec:
   replicas: 2
   selector:
@@ -11,9 +12,14 @@ spec:
     metadata:
       labels:
         app: frontend
+      annotations:
+        #sidecar.istio.io/inject: "false"  # ✅ Injection automatique du sidecar Istio
     spec:
+      serviceAccountName: booking-app          # ✅ ici
+      imagePullSecrets:
+      - name: regcred                          # ✅ ici
       containers:
       - name: frontend
-        image: camelia4/frontend:1.0
+        image: camelia4/frontend:9.1
         ports:
         - containerPort: 80
